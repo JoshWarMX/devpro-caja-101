@@ -23,7 +23,7 @@ export const getCurrentUser = () => {
   // } else {
   //   console.log("User is not logged in");
   // }
-  console.log("getCurrentUser get");
+  //console.log("getCurrentUser get", user);
   return user;
 }
 
@@ -62,31 +62,31 @@ export const uploadImage = async (image, path, name) => {
   const storageRef = ref(storage, (`${path}/${name}`));
 
   try {
-    await 
-    uploadBytes(storageRef, blob).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
+    await
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
     const url = await getDownloadURL(storageRef)
     console.log(url)
     result.statusResponse = true
     result.url = url
   } catch (error) {
     result.error = error
-    console.log("XXX",error)
+    console.log("XXX", error)
   }
   return result
 }
 
 export const updateProfile1 = async (data) => {
   const auth = getAuth();
-  const result = { statusResponse: false, error: null }
+  const result = { statusResponse: true, error: null }
   try {
-    await updateProfile(auth.currentUser, data)
+    await updateProfile(auth.currentUser, data)     
   } catch (error) {
     result.statusResponse = false
     result.error = error
   }
-  return result
+    return result 
 }
 
 

@@ -25,7 +25,7 @@ export default function InfoUser({ user, setloading, setloadingText }) {
     }
     const resultUpdateProfile = await updateProfile1({ photoURL: resultUploadImage.url })
     setloading(false)
-    if (!resultUpdateProfile.statusResponse) {
+    if (resultUpdateProfile.statusResponse) {
       setphotoUr(resultUploadImage.url)
     } else {
       Alert.alert("Occurrio un error al actualizar la foto")

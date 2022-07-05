@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from "@rneui/base"
 import { useNavigation } from '@react-navigation/native'
 import Toast from 'react-native-easy-toast'
@@ -16,10 +16,12 @@ export default function UserLogged() {
   const [loading, setloading] = useState(false)
   const [loadingText, setloadingText] = useState("")
   const [User, setUser] = useState(null)
+  const [reloadUser, setReloadUser] = useState(false)
 
-  useEffect(() => {
-    setUser(getCurrentUser())
-  }, [])
+  useEffect(() => {    
+      setUser(getCurrentUser())   
+      setReloadUser(false)
+  }, [reloadUser])
 
 
   return (
@@ -35,10 +37,11 @@ export default function UserLogged() {
             <AccountOptions
               user={User}
               toastRef={toastRef}
+              setReloadUser={setReloadUser}
             />
           </View>
         )
-      }      
+      }
       <Button
         title="Cerrar Sesion"
         buttonStyle={styles.button}
