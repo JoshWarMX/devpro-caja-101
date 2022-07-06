@@ -4,12 +4,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createStackNavigator } from '@react-navigation/stack';
 import { Icon } from "@rneui/base"
 
-import RestaurantsStack from './RestaurantsStack'
+import ProductsStack from './ProductsStack'
 import FavoritesStack from './FavoritesStack'
 import TopRestaurantsStack from './TopRestaurantsStack'
 import SearchStack from './SearchStack'
 import AccountStack from './AccountStack'
-import ScreenHome from '../screens/Home'
+
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator();
@@ -24,7 +24,7 @@ export default function Navigation() {
             case "favorites":
                 iconName = "cash-outline"
                 break;
-            case "top-restaurants":
+            case "products":
                 iconName = "barcode-outline"
                 break;
             case "search":
@@ -59,7 +59,7 @@ export default function Navigation() {
             >
                 <Tab.Screen
                     name="restaurants"
-                    component={RestaurantsStack}
+                    component={ProductsStack}
                     options={{ title: "Caja" }}
                 />
                 <Tab.Screen
@@ -67,9 +67,9 @@ export default function Navigation() {
                     component={FavoritesStack}
                     options={{ title: "Ventas" }}
                 />
-                <Tab.Screen
-                    name="top-restaurants"
-                    component={TopRestaurantsStack}
+                <Tab.Screen                    
+                    name="products"
+                    component={ProductsStack}
                     options={{ title: "Productos" }}
                 />
                 <Tab.Screen
@@ -77,7 +77,7 @@ export default function Navigation() {
                     component={SearchStack}
                     options={{ title: "Almacen" }}
                 />
-                <Tab.Screen
+                <Tab.Screen                    
                     name="account"
                     component={AccountStack}
                     options={{
@@ -85,8 +85,8 @@ export default function Navigation() {
                         title: "Cuenta"
                     }}
                 />
-                
-            </Tab.Navigator>            
+
+            </Tab.Navigator>
         </NavigationContainer>
     )
 }

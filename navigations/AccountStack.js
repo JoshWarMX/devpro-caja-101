@@ -16,7 +16,7 @@ export default function AccountStack() {
                 headerMode: 'none',
             }}
         >
-            <Stack.Screen
+            <Stack.Screen                
                 name="stackaccount"
                 component={compAccount}
                 options={{ title: "Cuenta" }}
@@ -37,13 +37,13 @@ export default function AccountStack() {
                 options={{ title: "Recuperar Contraseña" }}
             />
             <Stack.Screen
-                    name="screenhome"
-                    component={ScreenHome}
-                    options={{
-                        //headerShown: false,
-                        title: "Home"
-                    }}
-                />
+                name="screenhome"
+                component={ScreenHome}
+                options={{
+                    //headerShown: false,
+                    title: "Home"
+                }}
+            />
         </Stack.Navigator>
     )
 }

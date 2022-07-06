@@ -12,24 +12,19 @@ import 'firebase/compat/firestore';
 
 export const actIsUserLogged = () => {
   const auth = getAuth();
-  let isLogged = false;
-  onAuthStateChanged(auth, (user) => {
-    user !== null && (isLogged = true);
+  const result = { isLogged: false, error: null };
+  onAuthStateChanged(auth, (user) => {    
+    user !== null && (result.isLogged = true)
+    user === null && (result.isLogged = false)
+    console.log(result.isLogged)
   });
-  console.log("isUserLogged", isLogged);
-  return isLogged;
+  return result
 }
 
 export const actGetCurrentUser = () => {
-  const auth = getAuth();
-  const user = auth.currentUser;
-  // if (user) {
-  //   console.log("User is logged in");
-  // } else {
-  //   console.log("User is not logged in");
-  // }
-  //console.log("getCurrentUser get", user);
-  return user;
+  const auth = getAuth()
+  const user = auth.currentUser
+  return user
 }
 
 export const actCloseSession = () => {
@@ -132,8 +127,3 @@ export const actUpdatePassword = async (password) => {
   }
   return result
 }
-
-
-
-
-

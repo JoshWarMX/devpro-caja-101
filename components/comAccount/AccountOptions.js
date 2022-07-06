@@ -5,6 +5,7 @@ import { Icon, ListItem } from '@rneui/base'
 import Modal from '../Modal'
 import ChangeDisplayNameForm from './ChangeDisplayNameForm'
 import ChangeEmailForm from './ChangeEmailForm'
+import ChangePasswordForm from './ChangePasswordForm'
 
 export default function AccountOptions({ user, toastRef, setReloadUser }) {
     const [showModal, setshowModal] = useState(false)
@@ -44,26 +45,30 @@ export default function AccountOptions({ user, toastRef, setReloadUser }) {
             case "displayName":
                 setRenderComponent(
                     <ChangeDisplayNameForm
-                    displayName={user.displayName}
-                    setshowModal={setshowModal}
-                    toastRef={toastRef}
-                    setReloadUser={setReloadUser}
+                        displayName={user.displayName}
+                        setshowModal={setshowModal}
+                        toastRef={toastRef}
+                        setReloadUser={setReloadUser}
                     />
                 )
                 break;
             case "email":
                 setRenderComponent(
                     <ChangeEmailForm
-                    email={user.email}
-                    setshowModal={setshowModal}
-                    toastRef={toastRef}
-                    setReloadUser={setReloadUser}
+                        email={user.email}
+                        setshowModal={setshowModal}
+                        toastRef={toastRef}
+                        setReloadUser={setReloadUser}
                     />
                 )
                 break;
             case "password":
                 setRenderComponent(
-                    <Text>password</Text>
+                    <ChangePasswordForm
+                        setshowModal={setshowModal}
+                        toastRef={toastRef}
+                        setReloadUser={setReloadUser}
+                    />
                 )
                 break;
         }

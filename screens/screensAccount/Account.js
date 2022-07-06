@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import UserGuest from './UserGuest';
 import UserLogged from './UserLogged';
 import Loading from '../../components/Loading';
-import { actGetCurrentUser, actIsUserLogged } from '../../database/action';
+import { actGetCurrentUser } from '../../database/action';
 
 export default function Account() {
     const [login, setLogin] = useState(null)
@@ -13,7 +13,7 @@ export default function Account() {
     useFocusEffect(
         useCallback(() => {
             const user = actGetCurrentUser()
-            user ? setLogin(true) : setLogin(false)            
+            user ? setLogin(true) : setLogin(false)                      
         }, [])
     )
 
@@ -23,9 +23,5 @@ export default function Account() {
     }
     return login ? <UserLogged /> : <UserGuest />
 }
-//     return (
-//         <UserGuest />
-//     )
-// }
 
 const styles = StyleSheet.create({})

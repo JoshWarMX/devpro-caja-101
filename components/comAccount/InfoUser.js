@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Avatar } from '@rneui/base';
 
 import { loadImageFromGallery } from '../../utils/helper';
-import { updateProfile1, uploadImage } from '../../database/action';
+import { actUpdateProfile, actUploadImage, } from '../../database/action';
 
 export default function InfoUser({ user, setloading, setloadingText }) {
 
@@ -17,13 +17,13 @@ export default function InfoUser({ user, setloading, setloadingText }) {
     setloadingText("Actualizando Foto...")
     setloading(true)
 
-    const resultUploadImage = await uploadImage(result.image, "avatars", user.uid)
+    const resultUploadImage = await actUploadImage(result.image, "avatars", user.uid)
     if (!resultUploadImage.statusResponse) {
       setloading(false)
       Alert.alert("Occurrio un error al subir la foto")
       return
     }
-    const resultUpdateProfile = await updateProfile1({ photoURL: resultUploadImage.url })
+    const resultUpdateProfile = await actUpdateProfile({ photoURL: resultUploadImage.url })
     setloading(false)
     if (resultUpdateProfile.statusResponse) {
       setphotoUr(resultUploadImage.url)
