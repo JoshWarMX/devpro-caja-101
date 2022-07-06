@@ -1,11 +1,16 @@
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword, updateProfile, EmailAuthProvider,
+  reauthenticateWithCredential, updateEmail, updatePassword 
+}
+  from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL, } from "firebase/storage";
 import 'firebase/storage';
 import { fileToBlob } from "../utils/helper";
 import firebase from "./firebase";
 import 'firebase/compat/firestore';
 
-export const isUserLogged = () => {
+export const actIsUserLogged = () => {
   const auth = getAuth();
   let isLogged = false;
   onAuthStateChanged(auth, (user) => {
@@ -15,7 +20,7 @@ export const isUserLogged = () => {
   return isLogged;
 }
 
-export const getCurrentUser = () => {
+export const actGetCurrentUser = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   // if (user) {
@@ -27,11 +32,11 @@ export const getCurrentUser = () => {
   return user;
 }
 
-export const closeSessionFire = () => {
+export const actCloseSession = () => {
   return getAuth().signOut();
 }
 
-export const registerUserFire = async (email, password) => {
+export const actRegisterUser = async (email, password) => {
   const result = { statusResponse: false, error: null };
   const auth = getAuth();
   try {
@@ -43,7 +48,7 @@ export const registerUserFire = async (email, password) => {
   return result
 }
 
-export const lodinWithEmailAndPassword = async (email, password) => {
+export const actLodinWithEmailAndPassword = async (email, password) => {
   const result = { statusResponse: false, error: null };
   const auth = getAuth();
   try {
@@ -55,7 +60,7 @@ export const lodinWithEmailAndPassword = async (email, password) => {
   return result
 }
 
-export const uploadImage = async (image, path, name) => {
+export const actUploadImage = async (image, path, name) => {
   const result = { statusResponse: false, error: null, url: null }
   const blob = await fileToBlob(image)
   const storage = getStorage();
@@ -77,31 +82,56 @@ export const uploadImage = async (image, path, name) => {
   return result
 }
 
-export const updateProfile1 = async (data) => {
+export const actUpdateProfile = async (data) => {
   const auth = getAuth();
   const result = { statusResponse: true, error: null }
   try {
-    await updateProfile(auth.currentUser, data)     
+    await updateProfile(auth.currentUser, data)
   } catch (error) {
     result.statusResponse = false
     result.error = error
-  }
-    return result 
-}
-
-
-export const updateProfile2 = async (data) => {
-  const result = { statusResponse: false, error: null }
-  try {
-    await firebase.auth().currentUser.updateProfile(data)
-  } catch (error) {
-    result.statusResponse = false
-    result.error = error
-    console.log("first", error)
   }
   return result
 }
 
+
+export const actReAuthenticate = async (password) => {
+  const auth = getAuth();
+  const result = { statusResponse: true, error: null }
+  const user = actGetCurrentUser()
+  const credential = EmailAuthProvider.credential(user.email, password);
+  try {
+    await reauthenticateWithCredential(auth.currentUser, credential)    
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error    
+  }
+  return result  
+}
+
+export const actUpdateEmail = async (email) => {
+  const auth = getAuth();
+  const result = { statusResponse: true, error: null }
+  try {
+    await updateEmail(auth.currentUser, email)
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error
+  }
+  return result
+}
+
+export const actUpdatePassword = async (password) => {
+  const auth = getAuth();
+  const result = { statusResponse: true, error: null }
+  try {
+    await updatePassword(auth.currentUser, password)
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error
+  }
+  return result
+}
 
 
 

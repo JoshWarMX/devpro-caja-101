@@ -5,14 +5,14 @@ import { useFocusEffect } from '@react-navigation/native'
 import UserGuest from './UserGuest';
 import UserLogged from './UserLogged';
 import Loading from '../../components/Loading';
-import { getCurrentUser, isUserLogged } from '../../database/action';
+import { actGetCurrentUser, actIsUserLogged } from '../../database/action';
 
 export default function Account() {
     const [login, setLogin] = useState(null)
 
     useFocusEffect(
         useCallback(() => {
-            const user = getCurrentUser()
+            const user = actGetCurrentUser()
             user ? setLogin(true) : setLogin(false)            
         }, [])
     )

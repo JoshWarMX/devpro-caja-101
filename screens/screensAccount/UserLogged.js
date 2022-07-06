@@ -4,7 +4,7 @@ import { Button } from "@rneui/base"
 import { useNavigation } from '@react-navigation/native'
 import Toast from 'react-native-easy-toast'
 
-import { closeSessionFire, getCurrentUser } from '../../database/action'
+import { actCloseSession, actGetCurrentUser } from '../../database/action'
 import Loading from '../../components/Loading'
 import InfoUser from '../../components/comAccount/InfoUser'
 import AccountOptions from '../../components/comAccount/AccountOptions'
@@ -19,7 +19,7 @@ export default function UserLogged() {
   const [reloadUser, setReloadUser] = useState(false)
 
   useEffect(() => {    
-      setUser(getCurrentUser())   
+      setUser(actGetCurrentUser())   
       setReloadUser(false)
   }, [reloadUser])
 
@@ -47,7 +47,7 @@ export default function UserLogged() {
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
         onPress={() => {
-          closeSessionFire()
+          actCloseSession()
           navigation.navigate('screenhome')
           console.log("Cerrar Sesion");
         }}

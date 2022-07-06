@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import { validateEmail } from '../../utils/helper'
 import { isEmpty } from 'lodash'
 
-import { lodinWithEmailAndPassword } from '../../database/action'
+import { actLodinWithEmailAndPassword } from '../../database/action'
 
 
 export default function LoginForm() {
@@ -26,7 +26,7 @@ export default function LoginForm() {
             return
         }
         setloading(true)
-        const result = await lodinWithEmailAndPassword(formdata.email, formdata.password)
+        const result = await actLodinWithEmailAndPassword(formdata.email, formdata.password)
         setloading(false)
         if (!result.statusResponse) {
             seterrorEmail(result.error)

@@ -3,11 +3,11 @@ import React, { useState } from 'react'
 import { Button, Input } from '@rneui/base'
 import { isEmpty } from 'lodash'
 
-import { updateProfile1 } from '../../database/action'
+import { actUpdateProfile } from '../../database/action'
 
 
 export default function ChangeDisplayNameForm({ displayName, setshowModal, toastRef, setReloadUser }) {
-    const [newDisplayName, setnewDisplayName] = useState(null)
+    const [newDisplayName, setnewDisplayName] = useState(displayName)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
 
@@ -17,7 +17,7 @@ export default function ChangeDisplayNameForm({ displayName, setshowModal, toast
         }
 
         setLoading(true)
-        const result = await updateProfile1({ displayName: newDisplayName })
+        const result = await actUpdateProfile({ displayName: newDisplayName })
         setLoading(false)
 
         if (!result.statusResponse) {
