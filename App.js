@@ -1,12 +1,14 @@
 import "./ignoreWarnings"; // import at the very top of everything.
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet } from 'react-native';
 import Navigation from './navigations/Navigation';
 
 export default function App() {
+
   return (
-    <Navigation/>
-  );
+    <Navigation />
+  )
 }
 
 const styles = StyleSheet.create({

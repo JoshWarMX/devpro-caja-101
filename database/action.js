@@ -1,5 +1,5 @@
 import {
-  getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
+  getAuth, createUserWithEmailAndPassword,
   signInWithEmailAndPassword, updateProfile, EmailAuthProvider,
   reauthenticateWithCredential, updateEmail, updatePassword 
 }
@@ -9,17 +9,6 @@ import 'firebase/storage';
 import { fileToBlob } from "../utils/helper";
 import firebase from "./firebase";
 import 'firebase/compat/firestore';
-
-export const actIsUserLogged = () => {
-  const auth = getAuth();
-  const result = { isLogged: false, error: null };
-  onAuthStateChanged(auth, (user) => {    
-    user !== null && (result.isLogged = true)
-    user === null && (result.isLogged = false)
-    console.log(result.isLogged)
-  });
-  return result
-}
 
 export const actGetCurrentUser = () => {
   const auth = getAuth()
