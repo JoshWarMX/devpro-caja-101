@@ -5,7 +5,7 @@ import { map, size, filter, isEmpty, isNumber, toNumber } from 'lodash'
 import CountryPicker from 'react-native-country-picker-modal'
 
 import { loadImageFromGallery } from '../../utils/helper'
-import { actUploadImage } from '../../database/action'
+import { actAddDocumentWithOuthId, actGetCurrentUser, actUploadImage } from '../../database/action'
 import uuidv4 from 'random-uuid-v4'
 
 const widthScreen = Dimensions.get("window").width
@@ -24,17 +24,40 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
   const [errorScanCode, setErrorScanCode] = useState(null)
   const [imagesSelected, setimagesSelected] = useState([])
 
-  const addProduct = () => {
+  const addProduct = async() => {
+
     if (!validForm()) {
       return
     }
 
     setLoading(true)
-    const response = uploadImages()
-    console.log(response)
+    const responseUploadImages = await uploadImages()
+    const productData = {
+      title: formData.title,
+      name: formData.name,      
+      brand: formData.brand,
+      line: formData.line,
+      type: formData.type,
+      description: formData.description,
+      price: formData.price,
+      tax: formData.tax,      
+      scanCode: formData.scanCode,
+      images: responseUploadImages,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createBy: actGetCurrentUser().uid,
+      stock: [0,0,0,0],    
+    }   
+
+    const responseAddDocument = await actAddDocumentWithOuthId('products', productData) 
     setLoading(false)
 
-    console.log("Fuck Yeah", response)
+    if (!responseAddDocument.statusResponse) {
+      toastRef.current.show("Error al agregar el producto.", 2000) 
+      return
+    }
+
+    navigation.navigate("Products")
   }
 
   const uploadImages = async () => {
@@ -307,6 +330,7 @@ function FormAdd({
   }
 
   const onChangeN = (e, type) => {
+    const receivedValue = e.nativeEvent.text    
     setFormData({ ...formData, [type]: toNumber(e.nativeEvent.text) })
   }
 
@@ -358,7 +382,7 @@ function FormAdd({
           color: 'grey',
         }}
         placeholder="Precio"
-        defaultValue={formData.price}
+        defaultValue={onChangeN.receivedValue}
         keyboardType="decimal-pad"
         onChange={(e) => onChangeN(e, "price")}
         errorMessage={erroPrice}
@@ -370,7 +394,7 @@ function FormAdd({
           color: 'grey',
         }}
         placeholder="Porcentage de Impuesto"
-        defaultValue={formData.tax}
+        defaultValue={onChangeN.receivedValue}
         keyboardType="decimal-pad"
         onChange={(e) => onChangeN(e, "tax")}
         errorMessage={erroTax}
@@ -420,8 +444,8 @@ const defaultFormValues = () => {
     line: "",
     type: "",
     description: "",
-    price: 0,
-    tax: 0,
+    price: "",
+    tax: "",
     scanCode: "",
   }
 }

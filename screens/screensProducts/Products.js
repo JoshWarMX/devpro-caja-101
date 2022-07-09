@@ -2,29 +2,70 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { Icon } from '@rneui/base'
+import { size } from 'lodash'
 
-import { actGetCurrentUser } from '../../database/action'
+import { actGetCurrentUser, actGetProducts } from '../../database/action'
 import Loading from '../../components/Loading'
+import ListProducts from '../../components/comProducts/ListProducts'
+import { avatarSizes } from '@rneui/base/dist/Avatar/Avatar'
 
 export default function Products({ navigation }) {
 
     const [login, setLogin] = useState(null)
+    const [startProduct, setStartProduct] = useState(null)
+    const [products, setProducts] = useState([])
+    const [loading, setLoading] = useState(false)
+
+
+    const limitProducts = 10
+    //console.log("products", products)
+
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         const user = actGetCurrentUser()            
+    //         user ? setLogin(true) : setLogin(false)
+    //     }, [])        
+    // ) 
 
     useFocusEffect(
         useCallback(() => {
-            const user = actGetCurrentUser()            
-            user ? setLogin(true) : setLogin(false)
+            setLoading(true)            
+            async function getPro() {
+                const response = await actGetProducts(limitProducts)
+                if (response.statusResponse) {
+                    setStartProduct(response.startProduct)
+                    setProducts(response.products)
+                }
+            }
+            function getLog() {
+                const user = actGetCurrentUser()
+                user ? setLogin(true) : setLogin(false)
+            }
+            getLog()
+            getPro()
+            setLoading(false)
+            
         }, [])
-    ) 
-
+    )
 
     if (login == null) {
-        return <Loading isVisible={true} text="Cargando..." />
+        return <Loading isVisible={loading} text="Cargando..." />
     }
 
     return (
         <View style={styles.viewBody}>
-            <Text onPress={() => { console.log(user); }}>Products...</Text>
+            {
+                size(products) > 0 ?(
+                    <ListProducts
+                        products={products}
+                        navigation={navigation}
+                    />
+                ) :(
+                    <View style={styles.notFoundView} >
+                        <Text style={styles.notFoundText} >No hay productos</Text>
+                    </View>
+                )
+            }            
             {
                 login && (
                     <Icon
@@ -37,6 +78,8 @@ export default function Products({ navigation }) {
                     />
                 )
             }
+            <Loading isVisible={loading} text="Cargando..." />
+            
         </View>
     )
 }
@@ -46,12 +89,20 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     btnContainer: {
-        position: 'absolute',
+        position: "absolute",
         bottom: 10,
         right: 10,
-        shadowColor: 'black',
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.5,
+        shadowColor: "black",
+        shadowOffset: { width: 2, height: 2},
+        shadowOpacity: 0.5
+    },
+    notFoundView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    notFoundText: {
+        fontSize: 18,
+        fontWeight: "bold"
     }
-
 })

@@ -1,14 +1,14 @@
 import {
   getAuth, createUserWithEmailAndPassword,
   signInWithEmailAndPassword, updateProfile, EmailAuthProvider,
-  reauthenticateWithCredential, updateEmail, updatePassword 
+  reauthenticateWithCredential, updateEmail, updatePassword
 }
   from "firebase/auth";
-import { getStorage, ref, uploadBytes, getDownloadURL, } from "firebase/storage";
-import 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, getDocs, query, where, limit, orderBy } from "firebase/firestore";
+
 import { fileToBlob } from "../utils/helper";
 import firebase from "./firebase";
-import 'firebase/compat/firestore';
 
 export const actGetCurrentUser = () => {
   const auth = getAuth()
@@ -53,7 +53,6 @@ export const actUploadImage = async (image, path, name) => {
   try {
     await
       uploadBytes(storageRef, blob).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
       });
     const url = await getDownloadURL(storageRef)
     console.log(url)
@@ -85,12 +84,12 @@ export const actReAuthenticate = async (password) => {
   const user = actGetCurrentUser()
   const credential = EmailAuthProvider.credential(user.email, password);
   try {
-    await reauthenticateWithCredential(auth.currentUser, credential)    
+    await reauthenticateWithCredential(auth.currentUser, credential)
   } catch (error) {
     result.statusResponse = false
-    result.error = error    
+    result.error = error
   }
-  return result  
+  return result
 }
 
 export const actUpdateEmail = async (email) => {
@@ -110,6 +109,37 @@ export const actUpdatePassword = async (password) => {
   const result = { statusResponse: true, error: null }
   try {
     await updatePassword(auth.currentUser, password)
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error
+  }
+  return result
+}
+
+export const actAddDocumentWithOuthId = async (collectionBase, data) => {
+  const result = { statusResponse: true, error: null }  
+  try {
+    await addDoc(collection(firebase.db, collectionBase), data);
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error
+  }
+  return result
+}
+
+export const actGetProducts = async (limitProducts) => {
+  const result = { statusResponse: true, error: null, products: [], startProduct: null }  
+  //const q = query(collection(firebase.db, "products"), orderBy("updatedAt", "desc"), limit(limitProducts));
+  const q = query(collection(firebase.db, "products"), orderBy("updatedAt", "desc"), limit(limitProducts))
+  try {
+    const response = await getDocs(q)    
+    if (response.docs.length > 0) {
+      result.startProduct = response.docs[response.docs.length - 1]      
+    }
+    response.forEach((doc) => {
+      const product = doc.data()
+      result.products.push(product)
+    })
   } catch (error) {
     result.statusResponse = false
     result.error = error

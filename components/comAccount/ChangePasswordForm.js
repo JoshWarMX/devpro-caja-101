@@ -54,8 +54,7 @@ export default function ChangePasswordForm({ setshowModal, toastRef }) {
         const isEmptyConfirmPass = (isEmpty(confirmPassword))
         const isShortConfirmPass = (size(confirmPassword) < 6)
 
-        if (isEmptyCurrentPass && isShortCurrentPass) {
-            console.log(isEmptyCurrentPass, isShortCurrentPass)
+        if (isEmptyCurrentPass && isShortCurrentPass) {            
             setErrorCurrentPassword("La contraseña Actual no puede estar vacia.")
             isValid = false
         }
