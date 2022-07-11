@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
+
 import { Icon } from '@rneui/base'
 import { size } from 'lodash'
 
@@ -9,7 +10,7 @@ import Loading from '../../components/Loading'
 import ListProducts from '../../components/comProducts/ListProducts'
 import { avatarSizes } from '@rneui/base/dist/Avatar/Avatar'
 
-export default function Products({ navigation }) {
+export default function Products({ navigation, route }) {
 
     const [login, setLogin] = useState(null)
     const [startProduct, setStartProduct] = useState(null)
@@ -18,14 +19,6 @@ export default function Products({ navigation }) {
 
 
     const limitProducts = 10
-    //console.log("products", products)
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         const user = actGetCurrentUser()            
-    //         user ? setLogin(true) : setLogin(false)
-    //     }, [])        
-    // ) 
 
     useFocusEffect(
         useCallback(() => {

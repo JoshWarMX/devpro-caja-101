@@ -11,7 +11,7 @@ import uuidv4 from 'random-uuid-v4'
 const widthScreen = Dimensions.get("window").width
 const heightScreen = Dimensions.get("window").height
 
-export default function AddProductsForm({ toastRef, setLoading, navigation }) {
+export default function AddProductsForm({ toastRef, setLoading, navigation, codeCapture }) {
   const [formData, setFormData] = useState(defaultFormValues())
   const [erroTitle, setErroTitle] = useState(null)
   const [erroName, setErroName] = useState(null)
@@ -24,7 +24,9 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
   const [errorScanCode, setErrorScanCode] = useState(null)
   const [imagesSelected, setimagesSelected] = useState([])
 
-  const addProduct = async() => {
+  formData.scancode = codeCapture
+
+  const addProduct = async () => {
 
     if (!validForm()) {
       return
@@ -34,26 +36,26 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
     const responseUploadImages = await uploadImages()
     const productData = {
       title: formData.title,
-      name: formData.name,      
+      name: formData.name,
       brand: formData.brand,
       line: formData.line,
       type: formData.type,
       description: formData.description,
       price: formData.price,
-      tax: formData.tax,      
-      scanCode: formData.scanCode,
+      tax: formData.tax,
+      scanCode: formData.scancode,
       images: responseUploadImages,
       createdAt: new Date(),
       updatedAt: new Date(),
       createBy: actGetCurrentUser().uid,
-      stock: [0,0,0,0],    
-    }   
+      stock: [0, 0, 0, 0],
+    }
 
-    const responseAddDocument = await actAddDocumentWithOuthId('products', productData) 
+    const responseAddDocument = await actAddDocumentWithOuthId('products', productData)
     setLoading(false)
 
     if (!responseAddDocument.statusResponse) {
-      toastRef.current.show("Error al agregar el producto.", 2000) 
+      toastRef.current.show("Error al agregar el producto.", 2000)
       return
     }
 
@@ -173,7 +175,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
       valid = false
     }
 
-    const resScanCode = (inputStringValidation(formData.scanCode, 6))
+    const resScanCode = (inputStringValidation(formData.scancode, 6))
     if (resScanCode.empty) {
       setErrorScanCode("El codigo de barras no puede estar vacio.")
       valid = false
@@ -182,9 +184,6 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
       setErrorScanCode("El codigo de barras debe ser de al menos 6 caracteres.")
       valid = false
     }
-    console.log(resScanCode)
-
-
 
     return valid
   }
@@ -219,6 +218,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
         erroPrice={erroPrice}
         erroTax={erroTax}
         errorScanCode={errorScanCode}
+        navigation={navigation}
       />
       <UploadImageProducts
         toastRef={toastRef}
@@ -228,7 +228,8 @@ export default function AddProductsForm({ toastRef, setLoading, navigation }) {
       <Button
         title="Crear Producto"
         onPress={addProduct}
-        buttoStyle={styles.btnAdd}
+        buttonStyle={styles.btnAdd}
+        titleStyle={styles.btnAddText}
       />
     </ScrollView>
   )
@@ -319,7 +320,7 @@ function FormAdd({
   formData, setFormData, erroTitle,
   erroName, erroBrand, erroLine,
   erroType, erroDescription, erroPrice,
-  erroTax, errorScanCode
+  erroTax, errorScanCode, navigation
 }) {
   const [country, setCountry] = useState("CO")
   const [callinCode, setCallinCode] = useState("57")
@@ -330,7 +331,7 @@ function FormAdd({
   }
 
   const onChangeN = (e, type) => {
-    const receivedValue = e.nativeEvent.text    
+    const receivedValue = e.nativeEvent.text
     setFormData({ ...formData, [type]: toNumber(e.nativeEvent.text) })
   }
 
@@ -399,19 +400,31 @@ function FormAdd({
         onChange={(e) => onChangeN(e, "tax")}
         errorMessage={erroTax}
       />
-      <Input
-        rightIcon={{
-          type: 'material-community',
-          name: 'barcode-scan',
-          color: 'grey',
-        }}
-        placeholder="Scan Code"
-        keyboardType='numeric'
-        containerStyle={styles.scancode}
-        defaultValue={formData.scancode}
-        onChange={(e) => onChangeT(e, "scanCode")}
-        errorMessage={errorScanCode}
-      />
+      <View style={styles.viewScanCode}>
+        <Input
+          rightIcon={{
+            type: 'material-community',
+            name: 'barcode-scan',
+            color: 'grey',    
+            onPress: () => navigation.navigate('BarcodeScan')     
+          }}
+          placeholder="Scan Code"
+          keyboardType='numeric'
+          containerStyle={styles.scancode}
+          defaultValue={formData.scancode}
+          onChange={(e) => onChangeT(e, "scanCode")}
+          errorMessage={errorScanCode}
+        />
+        {/* <Button
+          title="Scan Code"
+          onPress={() => navigation.navigate('BarcodeScan')}
+          icon={{
+            type: 'material-community',
+            name: 'barcode-scan',
+            color: 'grey',
+          }}
+        /> */}
+      </View>
       {/* <View style={styles.phoneView}>
         <CountryPicker
           withFlag
@@ -446,7 +459,7 @@ const defaultFormValues = () => {
     description: "",
     price: "",
     tax: "",
-    scanCode: "",
+    scancode: "",
   }
 }
 
@@ -468,9 +481,17 @@ const styles = StyleSheet.create({
   inputPhone: {
     width: "80%"
   },
-  btnAddRestaurant: {
+  btnAdd: {
     margin: 20,
-    backgroundColor: "#442484"
+    backgroundColor: "#442484",
+    borderRadius: 30,
+  },
+  btnAddText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 22,
+    textAlign: "center",
+    padding: 10,
   },
   viewImages: {
     flexDirection: "row",
@@ -515,6 +536,9 @@ const styles = StyleSheet.create({
   },
   viewMapBtnSave: {
     backgroundColor: "#442484"
+  },
+  viewScanCode: {
+    flexDirection: "column",
   }
 
 })
