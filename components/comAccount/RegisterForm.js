@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Button, Icon, Input } from "@rneui/base"
 import { validateEmail } from '../../utils/helper'
 import { size } from 'lodash'
-import { closeSessionFire, registerUserFire } from '../../database/action'
+import { actRegisterUser } from '../../database/action'
 import { useNavigation } from '@react-navigation/native'
 import Loading from '../Loading'
 
@@ -25,7 +25,7 @@ export default function RegisterForm() {
             return
         }
         setloading(true)
-        const result = await registerUserFire(formdata.email, formdata.password)
+        const result = await actRegisterUser(formdata.email, formdata.password)
         setloading(false)
         if (!result.statusResponse) {
             seterrorEmail(result.error)

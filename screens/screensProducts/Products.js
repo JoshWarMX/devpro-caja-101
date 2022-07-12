@@ -27,7 +27,7 @@ export default function Products({ navigation, route }) {
                 const response = await actGetProducts(limitProducts)
                 if (response.statusResponse) {
                     setStartProduct(response.startProduct)
-                    setProducts(response.products)
+                    setProducts(response.products)                    
                 }
             }
             function getLog() {

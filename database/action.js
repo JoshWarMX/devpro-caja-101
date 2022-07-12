@@ -11,18 +11,21 @@ import { fileToBlob } from "../utils/helper";
 import firebase from "./firebase";
 
 export const actGetCurrentUser = () => {
+  console.log("actGetCurrentUser")
   const auth = getAuth()
   const user = auth.currentUser
   return user
 }
 
 export const actCloseSession = () => {
+  console.log("actCloseSession")
   return getAuth().signOut();
 }
 
 export const actRegisterUser = async (email, password) => {
   const result = { statusResponse: false, error: null };
   const auth = getAuth();
+  console.log("actRegisterUser")
   try {
     await createUserWithEmailAndPassword(auth, email, password)
     result.statusResponse = true;
@@ -35,6 +38,7 @@ export const actRegisterUser = async (email, password) => {
 export const actLodinWithEmailAndPassword = async (email, password) => {
   const result = { statusResponse: false, error: null };
   const auth = getAuth();
+  console.log("actLodinWithEmailAndPassword")
   try {
     await signInWithEmailAndPassword(auth, email, password)
     result.statusResponse = true;
@@ -49,7 +53,7 @@ export const actUploadImage = async (image, path, name) => {
   const blob = await fileToBlob(image)
   const storage = getStorage();
   const storageRef = ref(storage, (`${path}/${name}`));
-
+  console.log("actUploadImage")
   try {
     await
       uploadBytes(storageRef, blob).then((snapshot) => {
@@ -68,6 +72,7 @@ export const actUploadImage = async (image, path, name) => {
 export const actUpdateProfile = async (data) => {
   const auth = getAuth();
   const result = { statusResponse: true, error: null }
+  console.log("actUpdateProfile")
   try {
     await updateProfile(auth.currentUser, data)
   } catch (error) {
@@ -83,6 +88,7 @@ export const actReAuthenticate = async (password) => {
   const result = { statusResponse: true, error: null }
   const user = actGetCurrentUser()
   const credential = EmailAuthProvider.credential(user.email, password);
+  console.log("actReAuthenticate")
   try {
     await reauthenticateWithCredential(auth.currentUser, credential)
   } catch (error) {
@@ -95,6 +101,7 @@ export const actReAuthenticate = async (password) => {
 export const actUpdateEmail = async (email) => {
   const auth = getAuth();
   const result = { statusResponse: true, error: null }
+  console.log("actUpdateEmail")
   try {
     await updateEmail(auth.currentUser, email)
   } catch (error) {
@@ -107,6 +114,7 @@ export const actUpdateEmail = async (email) => {
 export const actUpdatePassword = async (password) => {
   const auth = getAuth();
   const result = { statusResponse: true, error: null }
+  console.log("actUpdatePassword")
   try {
     await updatePassword(auth.currentUser, password)
   } catch (error) {
@@ -118,6 +126,7 @@ export const actUpdatePassword = async (password) => {
 
 export const actAddDocumentWithOuthId = async (collectionBase, data) => {
   const result = { statusResponse: true, error: null }  
+  console.log("actAddDocumentWithOuthId")
   try {
     await addDoc(collection(firebase.db, collectionBase), data);
   } catch (error) {
@@ -128,9 +137,9 @@ export const actAddDocumentWithOuthId = async (collectionBase, data) => {
 }
 
 export const actGetProducts = async (limitProducts) => {
-  const result = { statusResponse: true, error: null, products: [], startProduct: null }  
-  //const q = query(collection(firebase.db, "products"), orderBy("updatedAt", "desc"), limit(limitProducts));
+  const result = { statusResponse: true, error: null, products: [], startProduct: null }    
   const q = query(collection(firebase.db, "products"), orderBy("updatedAt", "desc"), limit(limitProducts))
+  console.log("actGetProducts")
   try {
     const response = await getDocs(q)    
     if (response.docs.length > 0) {
@@ -140,6 +149,24 @@ export const actGetProducts = async (limitProducts) => {
       const product = doc.data()
       result.products.push(product)
     })
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error
+  }
+  return result
+}
+
+export const actFindProductby = async (type, name) => {
+  const result = { statusResponse: false, error: null }    
+  const q = query(collection(firebase.db, "products"), where(type, "==", name))
+  console.log("actFindProductby")
+  try {
+    const response = await getDocs(q)       
+    if (response.docs.length > 0) {
+      result.statusResponse = true     
+    } else {
+      result.statusResponse = false
+    }
   } catch (error) {
     result.statusResponse = false
     result.error = error

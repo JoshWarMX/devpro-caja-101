@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, ScrollView, Alert, Dimensions } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Input, Icon, Avatar, Image } from '@rneui/base'
 import { map, size, filter, isEmpty, isNumber, toNumber } from 'lodash'
 import CountryPicker from 'react-native-country-picker-modal'
 
 import { loadImageFromGallery } from '../../utils/helper'
-import { actAddDocumentWithOuthId, actGetCurrentUser, actUploadImage } from '../../database/action'
+import { actAddDocumentWithOuthId, actGetCurrentUser, actFindProductby, actUploadImage } from '../../database/action'
 import uuidv4 from 'random-uuid-v4'
+import { useFocusEffect } from '@react-navigation/native'
 
 const widthScreen = Dimensions.get("window").width
 const heightScreen = Dimensions.get("window").height
@@ -23,14 +24,24 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
   const [erroTax, setErroTax] = useState(null)
   const [errorScanCode, setErrorScanCode] = useState(null)
   const [imagesSelected, setimagesSelected] = useState([])
-
-  formData.scancode = codeCapture
-
+ 
   const addProduct = async () => {
 
     if (!validForm()) {
       return
     }
+    
+    const existentName = await actFindProductby("name",formData.name)
+    if (existentName.statusResponse) {
+      setErroName("Ya hay un producto con este nombre.")      
+      return
+    } 
+
+    const existentScanCode = await actFindProductby("scanCode",formData.scancode)
+    if (existentScanCode.statusResponse) {
+      setErrorScanCode("Ya hay un producto con este codigo de barras.")      
+      return
+    } 
 
     setLoading(true)
     const responseUploadImages = await uploadImages()
@@ -113,6 +124,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
       setErroName("El nombre debe tener al menos 6 caracteres.")
       valid = false
     }
+  
 
     const resBrand = (inputStringValidation(formData.brand, 2))
     if (resBrand.empty) {
@@ -184,7 +196,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
       setErrorScanCode("El codigo de barras debe ser de al menos 6 caracteres.")
       valid = false
     }
-
+   
     return valid
   }
 
@@ -199,6 +211,14 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
     setErroTax(null)
     setErrorScanCode(null)
   }
+
+  useFocusEffect(
+    useCallback(() => {         
+      if (codeCapture && (formData.scancode !== codeCapture) && (codeCapture !== "f")) {
+      setFormData({ ...formData, scancode: codeCapture })
+    }
+    }, [codeCapture]))
+
 
   return (
     <ScrollView style={styles.viewContainer}>
@@ -405,14 +425,14 @@ function FormAdd({
           rightIcon={{
             type: 'material-community',
             name: 'barcode-scan',
-            color: 'grey',    
-            onPress: () => navigation.navigate('BarcodeScan')     
+            color: 'grey',
+            onPress: () => navigation.navigate('BarcodeScan')
           }}
           placeholder="Scan Code"
           keyboardType='numeric'
           containerStyle={styles.scancode}
           defaultValue={formData.scancode}
-          onChange={(e) => onChangeT(e, "scanCode")}
+          onChange={(e) => onChangeT(e, "scancode")}
           errorMessage={errorScanCode}
         />
         {/* <Button
@@ -542,3 +562,4 @@ const styles = StyleSheet.create({
   }
 
 })
+

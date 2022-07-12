@@ -9,10 +9,8 @@ export default function AddProducts({ navigation, route }) {
 
     const toastRef = useRef()
     const [loading, setLoading] = useState(false)
-
     return (
-
-        <View>      
+        <View>
             <AddProductsForm
                 toastRef={toastRef}
                 setLoading={setLoading}
@@ -20,11 +18,10 @@ export default function AddProducts({ navigation, route }) {
                 codeCapture={route.params?.codeCapture}
                 route={route}
             />
-            <Toast ref={toastRef} position="center" opacity={0.9} />
+            <Loading isVisible={loading} text="Creando Producto..."/>
+            <Toast ref={toastRef} position="center" opacity={0.9} />          
         </View>
-
     )
-
 }
 
 const styles = StyleSheet.create({})
