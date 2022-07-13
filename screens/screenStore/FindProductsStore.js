@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function SearchStack() {
+export default function FindProductsStore() {
   return (
     <View>
-      <Text>SearchStack</Text>
+      <Text>FindProductsStore</Text>
     </View>
   )
 }

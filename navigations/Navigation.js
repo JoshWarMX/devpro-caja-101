@@ -7,7 +7,7 @@ import { Icon } from "@rneui/base"
 import ProductsStack from './ProductsStack'
 import FavoritesStack from './FavoritesStack'
 import TopRestaurantsStack from './TopRestaurantsStack'
-import SearchStack from './SearchStack'
+import StoreStack from './StoreStack'
 import AccountStack from './AccountStack'
 
 
@@ -27,7 +27,7 @@ export default function Navigation() {
             case "products":
                 iconName = "barcode-outline"
                 break;
-            case "search":
+            case "store":
                 iconName = "business-outline"
                 break;
             case "account":
@@ -73,8 +73,8 @@ export default function Navigation() {
                     options={{ title: "Productos" }}
                 />
                 <Tab.Screen
-                    name="search"
-                    component={SearchStack}
+                    name="store"
+                    component={StoreStack}
                     options={{ title: "Almacen" }}
                 />
                 <Tab.Screen                    

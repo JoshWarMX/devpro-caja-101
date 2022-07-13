@@ -1,5 +1,16 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
+// import Config from "react-native-config";
+
+// const firebaseConfig = {
+//   apiKey: Config.REACT_APP_FIREBASE_APIKEY,
+//   authDomain: Config.REACT_APP_FIREBASE_AUTHDOMAIN,
+//   projectId: Config.REACT_APP_FIREBASE_PROJECTID,
+//   storageBucket: Config.REACT_APP_FIREBASE_STORAGEBUCKET,
+//   messagingSenderId: Config.REACT_APP_FIREBASE_MESSAGINGSENDERID,
+//   appId: Config.REACT_APP_FIREBASE_APPID,
+//   measurementId: Config.REACT_APP_FIREBASE_MEASUREMENTID,
+// };
 
 const firebaseConfig = {
   apiKey: "AIzaSyAlHFmm1bnibJq7qSw6g2rADH15DU6FRJ0",

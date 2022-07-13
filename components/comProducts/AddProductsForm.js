@@ -24,24 +24,29 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
   const [erroTax, setErroTax] = useState(null)
   const [errorScanCode, setErrorScanCode] = useState(null)
   const [imagesSelected, setimagesSelected] = useState([])
- 
+
   const addProduct = async () => {
 
     if (!validForm()) {
       return
     }
-    
-    const existentName = await actFindProductby("name",formData.name)
-    if (existentName.statusResponse) {
-      setErroName("Ya hay un producto con este nombre.")      
-      return
-    } 
 
-    const existentScanCode = await actFindProductby("scanCode",formData.scancode)
-    if (existentScanCode.statusResponse) {
-      setErrorScanCode("Ya hay un producto con este codigo de barras.")      
+    const existentName = await actFindProductby("name", formData.name)
+    if (existentName.statusResponse) {
+      setErroName("Ya hay un producto con este nombre.")
       return
-    } 
+    }
+
+    const existentScanCode = await actFindProductby("scanCode", formData.scancode)
+    if (existentScanCode.statusResponse) {
+      setErrorScanCode("Ya hay un producto con este codigo de barras.")
+      return
+    }
+
+    if (size(imagesSelected) < 1) {
+      toastRef.current.show("Debes seleccionar al menos una imagen.", 2000)
+      return
+    }
 
     setLoading(true)
     const responseUploadImages = await uploadImages()
@@ -124,7 +129,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
       setErroName("El nombre debe tener al menos 6 caracteres.")
       valid = false
     }
-  
+
 
     const resBrand = (inputStringValidation(formData.brand, 2))
     if (resBrand.empty) {
@@ -196,7 +201,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
       setErrorScanCode("El codigo de barras debe ser de al menos 6 caracteres.")
       valid = false
     }
-   
+
     return valid
   }
 
@@ -213,10 +218,10 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
   }
 
   useFocusEffect(
-    useCallback(() => {         
+    useCallback(() => {
       if (codeCapture && (formData.scancode !== codeCapture) && (codeCapture !== "f")) {
-      setFormData({ ...formData, scancode: codeCapture })
-    }
+        setFormData({ ...formData, scancode: codeCapture })
+      }
     }, [codeCapture]))
 
 
@@ -244,6 +249,7 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
         toastRef={toastRef}
         imagesSelected={imagesSelected}
         setimagesSelected={setimagesSelected}
+        navigation={navigation}
       />
       <Button
         title="Crear Producto"
@@ -270,7 +276,7 @@ function ImageProduct({ imagesProduct }) {
   )
 }
 
-function UploadImageProducts({ toastRef, imagesSelected, setimagesSelected }) {
+function UploadImageProducts({ toastRef, imagesSelected, setimagesSelected, navigation }) {
 
   const imagesSelect = async () => {
     const response = await loadImageFromGallery([1, 1])
@@ -311,11 +317,18 @@ function UploadImageProducts({ toastRef, imagesSelected, setimagesSelected }) {
       horizontal
       style={styles.viewImages}
     >
+      <Icon
+        type='material-community'
+        name='camera'
+        color='#7a7a7a'
+        containerStyle={styles.containerIcon}
+        onPress={() => navigation.navigate('TakePhoto')}
+      />
       {
         size(imagesSelected) < 2 && (
           <Icon
             type='material-community'
-            name='camera'
+            name='camera-burst'
             color='#7a7a7a'
             containerStyle={styles.containerIcon}
             onPress={imagesSelect}
@@ -335,6 +348,8 @@ function UploadImageProducts({ toastRef, imagesSelected, setimagesSelected }) {
     </ScrollView>
   )
 }
+
+
 
 function FormAdd({
   formData, setFormData, erroTitle,

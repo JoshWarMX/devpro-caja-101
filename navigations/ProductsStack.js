@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Products from '../screens/screensProducts/Products'
 import AddProducts from '../screens/screensProducts/AddProducts'
 import BarcodeScan from '../screens/screensProducts/BarcodeScan'
+import TakePhoto from '../screens/screensProducts/TakePhoto'
 
 const Stack = createStackNavigator()
 
@@ -34,6 +35,13 @@ export default function ProductsStack() {
           title: 'Barcode',
         }}
         initialParams={{ capture: 'Not scanned yet' }}
+      />
+      <Stack.Screen
+        name="TakePhoto"
+        component={TakePhoto}
+        options={{
+          title: 'TakePhoto',
+        }}
       />
     </Stack.Navigator>
   )
