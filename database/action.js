@@ -157,16 +157,19 @@ export const actGetProducts = async (limitProducts) => {
 }
 
 export const actFindProductby = async (type, name) => {
-  const result = { statusResponse: false, error: null }    
+  const result = { statusResponse: false, error: null, product: null }    
   const q = query(collection(firebase.db, "products"), where(type, "==", name))
   console.log("actFindProductby")
   try {
     const response = await getDocs(q)       
     if (response.docs.length > 0) {
-      result.statusResponse = true     
+      result.statusResponse = true   
     } else {
       result.statusResponse = false
     }
+    response.forEach((doc) => {
+      result.product = doc.data()      
+    })
   } catch (error) {
     result.statusResponse = false
     result.error = error

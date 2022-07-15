@@ -3,7 +3,17 @@ import React, { useState, useEffect } from 'react'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { Button } from '@rneui/base'
 
-export default function BarcodeScan({ navigation, route }) {
+function BarcodeScan({ navigation, route }) {
+    return mainFunction(navigation, route, 'AddProducts')
+}
+
+function BarcodeScanStore({ navigation, route }) {
+    return mainFunction(navigation, route, 'EnterMerch')
+}
+
+export default (BarcodeScan, BarcodeScanStore)
+
+const mainFunction = (navigation, route, screenBack) => {
     const [hasPermission, setHasPermission] = useState(null)
     const [scanned, setScanned] = useState(false)
     const [barcode, setBarcode] = useState('No hay codigo')
@@ -58,18 +68,18 @@ export default function BarcodeScan({ navigation, route }) {
                     title="Escanear Nuevamente"
                     onPress={() => setScanned(false)}
                     buttonStyle={styles.btn}
-                    titleStyle= {styles.txtStyle}/>}
+                    titleStyle={styles.txtStyle} />}
                 {scanned && <Button
                     title="Aceptar Codigo"
                     onPress={() => {
                         navigation.navigate({
-                            name: 'AddProducts',
+                            name: screenBack,
                             params: { codeCapture: barcode },
                             merge: true,
                         })
                     }}
-                    buttonStyle={styles.btn} 
-                    titleStyle= {styles.txtStyle}/>}
+                    buttonStyle={styles.btn}
+                    titleStyle={styles.txtStyle} />}
             </View>
         </View>
     )
@@ -106,7 +116,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
-        margin: 10,        
+        margin: 10,
     },
     txtStyle: {
         fontSize: 20,
