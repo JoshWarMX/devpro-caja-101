@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 
 
 
-export default function FindProductsStore() {
+export default function Store() {
   const navigation = useNavigation()
   return (
     <View style={styles.buttonsContainer} >

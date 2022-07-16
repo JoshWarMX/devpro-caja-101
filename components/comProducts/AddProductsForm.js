@@ -64,10 +64,15 @@ export default function AddProductsForm({ toastRef, setLoading, navigation, code
       createdAt: new Date(),
       updatedAt: new Date(),
       createBy: actGetCurrentUser().uid,
-      stock: [0, 0, 0, 0],
+      stock1: 0,
+      stock2: 0,
+      stock3: 0,
+      stock4: 0,
+      stock5: 0,
     }
 
     const responseAddDocument = await actAddDocumentWithOuthId('products', productData)
+    console.log("55555555555555555555",responseAddDocument)
     setLoading(false)
 
     if (!responseAddDocument.statusResponse) {

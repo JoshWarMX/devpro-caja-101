@@ -6,7 +6,6 @@ import AddProductsForm from '../../components/comProducts/AddProductsForm'
 import Loading from '../../components/Loading'
 
 export default function AddProducts({ navigation, route }) {
-
     const toastRef = useRef()
     const [loading, setLoading] = useState(false)
     return (

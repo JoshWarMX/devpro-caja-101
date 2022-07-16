@@ -17,7 +17,7 @@ export default function ListProducts({ products, navigation }) {
 }
 
 function Product({ product, navigation }) {
-    const { id, images, name, price, stock, description } = product.item
+    const { id, images, name, price, stock1, description } = product.item
     const imageProduct = images[0]
     return (
         <TouchableOpacity>
@@ -32,7 +32,7 @@ function Product({ product, navigation }) {
                 <View>
                     <Text style={styles.productName}>{name}</Text>
                     <Text style={styles.productPrice}>$ {price}</Text>
-                    <Text style={styles.productStock}>stock: {stock[0]}</Text>
+                    <Text style={styles.productStock}>stock: {stock1}</Text>
                     <Text style={styles.productDescription}>{description}</Text>
                 </View>
             </View>

@@ -6,7 +6,7 @@ import CountryPicker from 'react-native-country-picker-modal'
 
 
 import { loadImageFromGallery } from '../../utils/helper'
-import { actAddDocumentWithOuthId, actGetCurrentUser, actFindProductby, actUploadImage } from '../../database/action'
+import { actGetCurrentUser, actFindProductby, actUploadImage, actUpdateStock, actAddDocumentWithOuthId } from '../../database/action'
 import uuidv4 from 'random-uuid-v4'
 import { useFocusEffect } from '@react-navigation/native'
 
@@ -22,13 +22,13 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
     const [errorScanCode, setErrorScanCode] = useState(null)
     const [errorQuantity, setErrorQuantity] = useState(null)
 
-    const addItemtoForm = async () => {
-
+    const addItemtoForm = async () => {  
+        
         if (!validItem()) {
             return
         }
-        
-        const findList = (findIndex(formEnterData.items, { 'scanCode': addItem.scanCode}))
+
+        const findList = (findIndex(formEnterData.items, { 'scanCode': addItem.scanCode }))
         console.log(findList)
         if (findList !== -1) {
             //setErrorScanCode('El codigo de barras ya existe en la lista.')
@@ -43,12 +43,16 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
             console.log(existentScanCode.statusResponse)
             return
         }
+        console.log(existentScanCode)
 
         addItem.name = existentScanCode.product.name
+        addItem.productId = existentScanCode.product.productId
         addItem.image = existentScanCode.product.images[0]
 
         formEnterData.items.push(addItem)
+        console.log(addItem)
         setAddItem(defaultItemData())
+
     }
 
     const enterMerch = async () => {
@@ -57,28 +61,37 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
             return
         }
 
-        if (size(imagesSelected) < 1) {
-            toastRef.current.show("Debes seleccionar al menos una imagen.", 2000)
-            return
+        const responseUploadImages = await uploadImages()
+        const enterMerchaData = {
+            reference: formEnterData.reference,
+            date: formEnterData.date,
+            items: formEnterData.items,          
+            images: responseUploadImages,
+            createdAt: new Date(),
+            createBy: actGetCurrentUser().uid,
+        }
+
+        const resultAddOrder = await actAddDocumentWithOuthId('enterMerchaOrders', enterMerchaData)
+        console.log(resultAddOrder)
+        if (!resultAddOrder.statusResponse) {
+            toastRef.current.show("Orden de Entrada Fallo.", 2000)
+            return            
         }
 
         setLoading(true)
-        const responseUploadImages = await uploadImages()
-        const enterMerchData = {
-            reference: formEnterData.reference,
-            date: formEnterData.date,
-            images: responseUploadImages,
-        }
+        console.log(setLoading)
 
-        const responseAddDocument = await actAddDocumentWithOuthId('enterMerch', enterMerchData)
+        formEnterData.items.forEach(element => {
+            actUpdateStock(element.productId, element.quantity)
+        });
+
+
+
+
         setLoading(false)
+        console.log(setLoading)
 
-        if (!responseAddDocument.statusResponse) {
-            toastRef.current.show("Error al agregar el producto.", 2000)
-            return
-        }
-
-        navigation.navigate("Products")
+        navigation.navigate("Store")
     }
 
     const uploadImages = async () => {
@@ -317,14 +330,14 @@ function UploadImageReference({ toastRef, imagesSelected, setimagesSelected, nav
 }
 
 function FormAdd({
-    formEnterData, setEnterFormData, errorReference,
+    formEnterData, setFormEnterData, errorReference,
     errorDate, addItem, setAddItem, errorScanCode, errorQuantity,
     addItemtoForm, navigation
 }) {
 
 
     const onChangeT = (e, type) => {
-        setEnterFormData({ ...formEnterData, [type]: e.nativeEvent.text })
+        setFormEnterData({ ...formEnterData, [type]: e.nativeEvent.text })
     }
 
     const onChangeT2 = (e, type) => {
@@ -382,6 +395,9 @@ function FormAdd({
                 />
                 <Button title="Agregar Item" buttonStyle={styles.btnAdd}
                     onPress={() => addItemtoForm()} />
+
+                <Button title="Prueba Stock" buttonStyle={styles.btnAdd}
+                    onPress={() => actUpdateStock("EqFO7CF1gYvy40GJ2w4j", 10)} />
             </View>
             {
                 formEnterData.items.map((items, i) => (
@@ -389,7 +405,7 @@ function FormAdd({
                         <Avatar
                             source={{ uri: items.image }} rounded
                             size="large" />
-                        <ListItem.Content>                            
+                        <ListItem.Content>
                             <ListItem.Title>{items.quantity} piezas</ListItem.Title>
                             <ListItem.Subtitle>{items.name}</ListItem.Subtitle>
                             <ListItem.Subtitle>{items.scanCode}</ListItem.Subtitle>
@@ -418,6 +434,7 @@ const defaultItemData = () => {
         quantity: "",
         price: "",
         image: "",
+        productId: "",
     }
 }
 

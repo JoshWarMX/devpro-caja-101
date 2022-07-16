@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Products from '../screens/screensProducts/Products'
 import AddProducts from '../screens/screensProducts/AddProducts'
 import BarcodeScan from '../screens/screensProducts/BarcodeScan'
-import TakePhoto from '../screens/screensProducts/TakePhoto'
+import TakePhoto from '../components/TakePhoto'
 
 const Stack = createStackNavigator()
 

@@ -3,8 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import Store from '../screens/screenStore/Store'
 import EnterMerch from '../screens/screenStore/EnterMerch'
-import BarcodeScanStore from '../screens/screensProducts/BarcodeScan'
-import TakePhoto from '../screens/screensProducts/TakePhoto'
+import BarcodeScan from '../screens/screenStore/BarcodeScan'
+import TakePhoto from '../components/TakePhoto'
 
 Stack = createStackNavigator()
 
@@ -29,7 +29,7 @@ export default function StoreStack() {
       />
       <Stack.Screen
         name="BarcodeScan"
-        component={BarcodeScanStore}
+        component={BarcodeScan}
         options={{
           title: 'Barcode',
         }}
