@@ -129,7 +129,7 @@ export const actAddDocumentWithOuthId = async (collectionBase, data) => {
   console.log("actAddDocumentWithOuthId")
   try { 
     const docRef = await addDoc(collection(firebase.db, collectionBase), data);
-    await actUpdateId(docRef.id, collectionBase)
+    await actUpdateId(collectionBase, docRef.id)
   } catch (error) {
     result.statusResponse = false
     result.error = error
@@ -149,6 +149,26 @@ export const actGetProducts = async (limitProducts) => {
     response.forEach((doc) => {
       const product = doc.data()
       result.products.push(product)
+    })
+  } catch (error) {
+    result.statusResponse = false
+    result.error = error
+  }
+  return result
+}
+
+export const actGetEnterOrders = async (limitOrders) => {
+  const result = { statusResponse: true, error: null, orders: [], startOrder: null }
+  const q = query(collection(firebase.db, "enterMerchaOrders"), orderBy("createdAt", "desc"), limit(limitOrders))
+  console.log("actGetEnterOrders")
+  try {
+    const response = await getDocs(q)
+    if (response.docs.length > 0) {
+      result.startOrder = response.docs[response.docs.length - 1]
+    }
+    response.forEach((doc) => {
+      const order = doc.data()      
+      result.orders.push(order)
     })
   } catch (error) {
     result.statusResponse = false
@@ -178,9 +198,9 @@ export const actFindProductby = async (type, name) => {
   return result
 }
 
-export const actUpdateId = async (docId, collection) => {
+export const actUpdateId = async (collectionBase, docId) => {
   const result = { statusResponse: true, error: null }
-  const ref = doc(collection(firebase.db, collection), docId)
+  const ref = doc(collection(firebase.db, collectionBase), docId)
   console.log("actUpdateStock")
   try {
     await updateDoc(ref, {

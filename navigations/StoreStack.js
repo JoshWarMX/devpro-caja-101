@@ -5,6 +5,7 @@ import Store from '../screens/screenStore/Store'
 import EnterMerch from '../screens/screenStore/EnterMerch'
 import BarcodeScan from '../screens/screenStore/BarcodeScan'
 import TakePhoto from '../components/TakePhoto'
+import OrdersEnterMerch from '../screens/screenStore/OrdersEnterMerch'
 
 Stack = createStackNavigator()
 
@@ -42,7 +43,13 @@ export default function StoreStack() {
           title: 'TakePhoto',
         }}
       />
+      <Stack.Screen
+        name="OrdersEnterMerch"
+        component={OrdersEnterMerch}
+        options={{
+          title: 'OrdersEnterMerch',
+        }}
+      />
     </Stack.Navigator>
   )
 }
-

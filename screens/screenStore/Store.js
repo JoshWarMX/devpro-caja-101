@@ -24,7 +24,7 @@ export default function Store() {
         icon={styles.iconEnterMerch}
         iconPosition="right"
         iconContainerStyle={styles.iconContainerStyle}
-        onPress={() => navigation.navigate('EnterMerch')}
+        onPress={() => navigation.navigate('OrdersEnterMerch')}
       />
     </View>
   )
