@@ -159,7 +159,7 @@ export const actGetProducts = async (limitProducts) => {
 
 export const actGetEnterOrders = async (limitOrders) => {
   const result = { statusResponse: true, error: null, orders: [], startOrder: null }
-  const q = query(collection(firebase.db, "enterMerchaOrders"), orderBy("createdAt", "desc"), limit(limitOrders))
+  const q = query(collection(firebase.db, "enterMerchOrders"), orderBy("createdAt", "desc"), limit(limitOrders))
   console.log("actGetEnterOrders")
   try {
     const response = await getDocs(q)

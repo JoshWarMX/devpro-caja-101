@@ -48,7 +48,7 @@ export default function OrdersEnterMerch({ navigation, route }) {
 
     return (        
         <View style={styles.viewBody}>
-            <Text style={styles.title}>Ordenes de entrada Generadas</Text>
+            <Text style={styles.title}>Ordenes de Entrada Generadas</Text>
             {
                 size(orders) > 0 ?(
                     <ListOrderEnterMerch

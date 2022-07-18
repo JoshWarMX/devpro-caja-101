@@ -16,11 +16,11 @@ const heightScreen = Dimensions.get("window").height
 export default function EnterMerchForm({ toastRef, setLoading, navigation, codeCapture }) {
     const [formEnterData, setFormEnterData] = useState(defaultFormValues())
     const [errorReference, setErrorReference] = useState(null)
-    const [errorDate, setErrorDate] = useState(null)
     const [imagesSelected, setimagesSelected] = useState([])
     const [addItem, setAddItem] = useState(defaultItemData())
     const [errorScanCode, setErrorScanCode] = useState(null)
     const [errorQuantity, setErrorQuantity] = useState(null)
+    const [errorPrice, setErrorPrice] = useState(null)
 
     const addItemtoForm = async () => {  
         
@@ -62,16 +62,15 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
         }
 
         const responseUploadImages = await uploadImages()
-        const enterMerchaData = {
+        const enterMerchData = {
             reference: formEnterData.reference,
-            date: formEnterData.date,
             items: formEnterData.items,          
             images: responseUploadImages,
             createdAt: new Date(),
             createBy: actGetCurrentUser().uid,
         }
 
-        const resultAddOrder = await actAddDocumentWithOuthId('enterMerchaOrders', enterMerchaData)
+        const resultAddOrder = await actAddDocumentWithOuthId('enterMerchOrders', enterMerchData)
         console.log(resultAddOrder)
         if (!resultAddOrder.statusResponse) {
             toastRef.current.show("Orden de Entrada Fallo.", 2000)
@@ -135,17 +134,6 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
             setErrorReference("La referencia debe tener al menos 6 caracteres.")
             valid = false
         }
-
-        const resName = (inputStringValidation(formEnterData.date, 6))
-        if (resName.empty) {
-            setErrorDate("La fecha no puede estar vacia.")
-            valid = false
-        }
-        if (!resName.empty && resName.short) {
-            setErrorDate("La fecha debe tener al menos 6 caracteres.")
-            valid = false
-        }
-
         return valid
     }
 
@@ -184,17 +172,23 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
             valid = false
         }
 
+        const resPrice = (inputNumberValidation(addItem.price, 6))
+        if (resPrice.empty) {
+            setErrorPrice("El Precio debe ser mayor a 0.")
+            valid = false
+        }
+
         return valid
     }
 
     const clearErrors = () => {
         setErrorReference(null)
-        setErrorDate(null)
     }
 
     const clearErrorsItem = () => {
         setErrorScanCode(null)
         setErrorQuantity(null)
+        setErrorPrice(null)
     }
 
     useFocusEffect(
@@ -203,6 +197,8 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
                 setAddItem({ ...addItem, scanCode: codeCapture })
             }
         }, [codeCapture]))
+
+    const sumall = formEnterData.items.map(item => item.quantity * item.price).reduce((prev, curr) => prev + curr, 0);
 
 
     return (
@@ -214,7 +210,6 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
                 formEnterData={formEnterData}
                 setFormEnterData={setFormEnterData}
                 errorReference={errorReference}
-                errorDate={errorDate}
                 navigation={navigation}
                 setAddItem={setAddItem}
                 addItem={addItem}
@@ -224,6 +219,7 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
                 imagesSelected={imagesSelected}
                 addItemtoForm={addItemtoForm}
                 enterMerch={enterMerch}
+                errorPrice={errorPrice}                
             />
             <UploadImageReference
                 toastRef={toastRef}
@@ -231,6 +227,10 @@ export default function EnterMerchForm({ toastRef, setLoading, navigation, codeC
                 setimagesSelected={setimagesSelected}
                 navigation={navigation}
             />
+            <View style={{ alignItems: 'center'}}>
+            <Text style={styles.total}>Total de la Factura: $ {sumall}</Text>
+            
+            </View>
             <Button
                 title="Ingresar Mercancia"
                 onPress={enterMerch}
@@ -259,7 +259,7 @@ function ImageReference({ imagesProduct }) {
 function UploadImageReference({ toastRef, imagesSelected, setimagesSelected, navigation }) {
 
     const imagesSelect = async () => {
-        const response = await loadImageFromGallery([1, 1])
+        const response = await loadImageFromGallery([3, 4])
         if (!response.status) {
             toastRef.current.show("No has Seleccionado Imagen.", 2000)
             return
@@ -331,8 +331,8 @@ function UploadImageReference({ toastRef, imagesSelected, setimagesSelected, nav
 
 function FormAdd({
     formEnterData, setFormEnterData, errorReference,
-    errorDate, addItem, setAddItem, errorScanCode, errorQuantity,
-    addItemtoForm, navigation
+    addItem, setAddItem, errorScanCode, errorQuantity,
+    addItemtoForm, navigation, errorPrice
 }) {
 
 
@@ -346,9 +346,8 @@ function FormAdd({
 
     const onChangeN = (e, type) => {
         const receivedValue = e.nativeEvent.text
-        setEnterFormData({ ...formEnterData, [type]: toNumber(e.nativeEvent.text) })
+        setAddItem({ ...addItem, [type]: toNumber(e.nativeEvent.text) })
     }
-
 
     return (
         <View style={styles.viewForm}>
@@ -357,15 +356,7 @@ function FormAdd({
                 defaultValue={formEnterData.reference}
                 onChange={(e) => onChangeT(e, "reference")}
                 errorMessage={errorReference}
-
-            />
-            <Input
-                placeholder="Fecha"
-                defaultValue={formEnterData.date}
-                onChange={(e) => onChangeT(e, "date")}
-                errorMessage={errorDate}
-                keyboardType="numeric"
-            />
+            />           
             <View style={styles.viewForm2}>
                 <Input
                     placeholder="Codigo de Barras"
@@ -382,8 +373,8 @@ function FormAdd({
                 />
                 <Input
                     placeholder="Cantidad"
-                    defaultValue={addItem.quantity}
-                    onChange={(e) => onChangeT2(e, "quantity")}
+                    defaultValue={onChangeN.receivedValue}
+                    onChange={(e) => onChangeN(e, "quantity")}
                     errorMessage={errorQuantity}
                     keyboardType="numeric"
                     rightIcon={{
@@ -393,27 +384,45 @@ function FormAdd({
                         onPress: () => navigation.navigate('BarcodeScan')
                     }}
                 />
+                <Input
+                    placeholder="Precio de Compra"
+                    defaultValue={onChangeN.receivedValue}
+                    onChange={(e) => onChangeN(e, "price")}
+                    errorMessage={errorPrice}
+                    keyboardType="numeric"
+                    rightIcon={{
+                        type: 'material-community',
+                        name: 'currency-usd',
+                        color: 'grey',
+                        onPress: () => navigation.navigate('BarcodeScan')
+                    }}
+                />
                 <Button title="Agregar Item" buttonStyle={styles.btnAdd}
                     onPress={() => addItemtoForm()} />
-
-                <Button title="Prueba Stock" buttonStyle={styles.btnAdd}
-                    onPress={() => actUpdateStock("EqFO7CF1gYvy40GJ2w4j", 10)} />
             </View>
+            
             {
+                size(formEnterData.items) > 0 ? (
                 formEnterData.items.map((items, i) => (
                     <ListItem key={i} bottomDivider>
                         <Avatar
                             source={{ uri: items.image }} rounded
                             size="large" />
                         <ListItem.Content>
-                            <ListItem.Title>{items.quantity} piezas</ListItem.Title>
+                            <ListItem.Title>Cantidad: {items.quantity} piezas    Precio: {items.price} $</ListItem.Title>
                             <ListItem.Subtitle>{items.name}</ListItem.Subtitle>
-                            <ListItem.Subtitle>{items.scanCode}</ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
+                            <ListItem.Subtitle>cod. {items.scanCode}</ListItem.Subtitle>                        
+                        </ListItem.Content>                        
                     </ListItem>
-                ))
+                ))                
+                
+                ) : (
+                    <View style={styles.notFoundView} >
+                        <Text style={styles.notFoundText} >No Items Agregados</Text>
+                    </View>
+                )
             }
+
         </View>
     )
 
@@ -520,6 +529,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 10,
         backgroundColor: "lightgray",
+    },
+    total: {
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        width: "80%",
+        padding: 5,
+        borderRadius: 30,        
+        color: "white",
+        backgroundColor: "gray",
     }
-
 })
