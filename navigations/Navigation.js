@@ -6,7 +6,7 @@ import { Icon } from "@rneui/base"
 
 import ProductsStack from './ProductsStack'
 import FavoritesStack from './FavoritesStack'
-import TopRestaurantsStack from './TopRestaurantsStack'
+import CounterStack from './CounterStack'
 import StoreStack from './StoreStack'
 import AccountStack from './AccountStack'
 
@@ -59,7 +59,7 @@ export default function Navigation() {
             >
                 <Tab.Screen
                     name="restaurants"
-                    component={ProductsStack}
+                    component={CounterStack}
                     options={{ title: "Caja" }}
                 />
                 <Tab.Screen

@@ -20,7 +20,7 @@ export default function Store() {
         iconPosition="right"
         iconContainerStyle={styles.iconContainerStyle}
       />
-      <Button buttonStyle={styles.btnContainer} titleStyle={styles.textStyle} title="Ingresar Mercancia"
+      <Button buttonStyle={styles.btnContainer} titleStyle={styles.textStyle} title="Ingresos de Mercancia"
         icon={styles.iconEnterMerch}
         iconPosition="right"
         iconContainerStyle={styles.iconContainerStyle}

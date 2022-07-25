@@ -401,6 +401,7 @@ function FormAdd({
         defaultValue={formData.line}
         onChange={(e) => onChangeT(e, "line")}
         errorMessage={erroLine}
+        
       />
       <Input
         placeholder="Tipo de Producto"
