@@ -1,5 +1,5 @@
 import "./ignoreWarnings"; // import at the very top of everything.
-import { StatusBar } from 'expo-status-bar';
+//import { StatusBar } from 'expo-status-bar';
 import React from "react";
 import { StyleSheet } from 'react-native';
 import Navigation from './navigations/Navigation';
